@@ -3,30 +3,46 @@ const EMPTY_HEART = '♡'
 const FULL_HEART = '♥'
 
 // Your JavaScript code goes here!
-
-let like = document.querySelector('.like-glyph')
+// Selecting the heart 
+let likes = document.querySelectorAll('.like-glyph')
 // console.log(like);
-like.addEventListener('click',function (event) {
-  // event.preventDefault();
+
+// Add event listener to all hearts
+likes.forEach((like) => {
+  like.addEventListener("click", heartClick);
+});
+
+const heartClick = function(event) {
+  // Invoke mimicServerCall when user clicks on heart
   mimicServerCall()
-  .then( function (serverMessage)  {
-    if (like === EMPTY_HEART ) {
-      like.innerHTML = FULL_HEART
-      like.classList.add('activated-heart') 
-    } else {
-      like.innerHTML = EMPTY_HEART
-      like.classList.remove('activated-heart')
-    }
-  })
-  .catch( function (error) {
-    like.classList.remove('hidden')
-    let message = document.getElementById('modal-message')
-    message.innerText = error;
-    setTimeout(() => {
-      like.classList.add('hidden')
-    }, 3000);
-  })  
-})
+    // If failure: display error modal
+    .catch((message) => {
+      // Remove "hidden" class from error modal
+      const modal = document.getElementById("modal");
+      modal.classList.remove("hidden");
+
+      // Display error message
+      const errorMessage = modal.getElementById("modal-message");
+      errorMessage.innerHTML = message;
+
+      // Hide modal after 3 seconds
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 3000);
+    })
+    // Change heart button to full heart if empty heart
+    .then(() => {
+      if (event.target.innerHTML === EMPTY_HEART) {
+        event.target.innerHTML = FULL_HEART;
+        event.target.classList.add("activated-heart");
+      } else {
+        event.target.innerHTML = EMPTY_HEART;
+        event.target.classList.remove("activated-heart");
+      }
+    });
+};
+
+
 
 
 
